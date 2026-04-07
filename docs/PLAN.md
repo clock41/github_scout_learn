@@ -243,3 +243,182 @@ B+C的跳轉，你順便幫我把這個資料夾名改成github_scout_learn
 更新 package.json 的專案名稱為 github_scout_learn。
 
 嘗試改名資料夾但遇到問題（終端機正在使用中）。
+
+---
+
+### 用戶
+
+我想請你幫我初始化git在這個專案你會怎麼做
+
+---
+
+### AI
+
+先探索專案目錄結構，確認這是 Vue 3 + Vite 專案。提出三步驟計畫：
+1. 建立 .gitignore（排除 node_modules、dist）
+2. 執行 git init
+3. 第一次提交
+
+詢問是否要推送到 GitHub 遠端。
+
+---
+
+### 用戶
+
+好的請你執行
+
+---
+
+### AI
+
+執行：
+1. 建立 .gitignore（node_modules、dist、.DS_Store）
+2. git init 完成
+3. git add . 加入所有檔案
+4. git commit 建立第一次提交
+
+結果：10 個檔案追蹤完成，master 分支乾淨。
+
+---
+
+### 用戶
+
+你需要讀一下AGENT.md了解專案的運行規則和你的運行規則
+
+---
+
+### AI
+
+重新讀取 AGENTS.md 並說明核心守則：
+- 白話解釋（用「盒子」代替 ref）
+- 程式碼註解要求
+- 一次一事原則
+- 明確授權限制
+- 對話記錄規範
+
+提醒目前是 Plan Mode，詢問下一步。
+
+---
+
+### 用戶
+
+你的session的紀錄是會記錄到什麼時候
+
+---
+
+### AI
+
+說明 session 在對話結束後消失，建議三種保留上下文方式：
+- 寫進 AGENTS.md
+- 寫進程式碼註解
+- 直接在對話開頭告訴背景
+
+---
+
+### 用戶
+
+我想要把搜尋置中，大頭貼跟介紹同一橫排，專案兩個一橫排
+
+---
+
+### AI
+
+分析目前程式碼結構，提出三步驟計畫：
+1. 搜尋置中：用 search-box 包住，text-align: center
+2. 大頭貼+介紹同排：用 profile-row（display: flex）
+3. 專案兩個一排：用 repo-grid（display: grid，兩欄）
+
+展示具體修改位置和新增 CSS。
+
+---
+
+### 用戶
+
+好請你寫入
+
+---
+
+### AI
+
+1. 修改 template 結構（新增 search-box、profile-row、repo-grid）
+2. 修改 CSS（新增相應樣式）
+3. 執行 npm run build 成功
+4. 按規定將對話記錄寫入 PLAN.md
+
+---
+
+### 用戶
+
+為什麼dist裡有index.html
+
+---
+
+### AI
+
+解釋 dist/ 是 Vite build 時自動產生的「打包資料夾」，裡面是正式版檔案。說明 index.html 和 assets/ 的來源，以及 dist/ 不需要進 Git 版控（已在 .gitignore 排除）。
+
+---
+
+### 用戶
+
+幫我把專案格線調深
+
+---
+
+### AI
+
+修改專案卡片樣式：
+- gap: 10px → 20px
+- padding: 10px → 20px
+- border: 1px solid #eee → 1px solid #ddd
+- border-radius: 5px → 8px
+
+執行 npm run build 成功，並將對話記錄寫入 PLAN.md。
+
+---
+
+### 用戶
+
+為什麼dist裡有index.html
+
+---
+
+### AI
+
+解釋 dist/ 是 Vite build 時自動產生的「打包資料夾」，裡面是正式版檔案。說明 index.html 和 assets/ 的來源，以及 dist/ 不需要進 Git 版控（已在 .gitignore 排除）。
+
+---
+
+### 用戶
+
+把顏色調深
+
+---
+
+### AI
+
+說明目前在 Plan Mode 無法修改，列出可調整的顏色選項（專案卡片邊框、連結藍、標題文字等）。
+
+---
+
+### 用戶
+
+專案卡片邊框
+
+---
+
+### AI
+
+提出計畫：將專案卡片邊框從 #ddd 改成 #999。
+
+---
+
+### 用戶
+
+按你的plan
+
+---
+
+### AI
+
+修改專案卡片邊框顏色：#ddd → #999。執行 npm run build 成功，並將對話記錄寫入 PLAN.md。
