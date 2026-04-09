@@ -13,6 +13,28 @@ const 錯誤訊息盒 = ref('')
 // 建立一個「專案列表盒子」，一開始是空的（放專案名稱列表）
 const 專案列表盒 = ref([])
 
+// 建立一個「計時器盒子」，一開始沒有東西（用來存放計時器 ID）
+const 計時器盒 = ref(null)
+
+// 建立一個「啟動計時器功能」
+const 啟動計時器 = () => {
+  // 每 30 秒自動抓一次資料（1000 = 1 秒）
+  計時器盒.value = setInterval(() => {
+    去抓資料()
+  }, 30000)
+}
+
+// 建立一個「停止計時器功能」
+const 停止計時器 = () => {
+  if (計時器盒.value) {
+    clearInterval(計時器盒.value)  // 停止計時器
+    計時器盒.value = null
+  }
+}
+
+// 建立一個「深色模式盒子」，一開始是淺色模式（false = 淺色）
+const 深色模式盒 = ref(false)
+
 // 建立一個「搜尋功能」，專門去 GitHub 拿資料
 const 去抓資料 = async () => {
   // 如果名字盒是空的，就不做任何事
@@ -38,25 +60,44 @@ const 去抓資料 = async () => {
   // 再叫「資料快遞員」去拿「專案列表」
   const 專案回應 = await fetch(`https://api.github.com/users/${名字盒.value}/repos`)
   專案列表盒.value = await 專案回應.json()
+
+  // 抓到資料後，啟動計時器（每 30 秒自動更新一次）
+  啟動計時器()
+}
+
+// 建立一個「切換深色模式功能」，按下去就切換模式
+const 切換深色模式 = () => {
+  深色模式盒.value = !深色模式盒.value
+  // 把深色 class 加到 body 上面（讓整個頁面都變色）
+  document.body.classList.toggle('dark')
 }
 </script>
 
 <template>
   <!-- 這裡放「長什麼樣子」：輸入框、按鈕、顯示區 -->
 
-  <div>
-    <!-- 搜尋區：用一個盒子包住，讓裡面的輸入框和按鈕置中 -->
+  <!-- 外層用「深色模式盒子」的狀態，決定要不要加上深色 class -->
+  <div :class="{ dark: 深色模式盒 }">
+    <!-- 搜尋區：用一個盒子包住，讓搜尋框靠左、模式切換靠右 -->
     <div class="search-box">
-      <!-- 文字格子：讓使用者輸入 GitHub 用戶名 -->
-      <!-- v-model 是「連接線」：格子裡打的字會自動放進「名字盒」 -->
-      <input 
-        type="text" 
-        v-model="名字盒" 
-        placeholder="輸入 GitHub 用戶名..."
-      />
+      <!-- 左邊：搜尋框和搜尋按鈕包在一起 -->
+      <div class="search-left">
+        <!-- 文字格子：讓使用者輸入 GitHub 用戶名 -->
+        <!-- v-model 是「連接線」：格子裡打的字會自動放進「名字盒」 -->
+        <input 
+          type="text" 
+          v-model="名字盒" 
+          placeholder="輸入 GitHub 用戶名..."
+        />
 
-      <!-- 搜尋按鈕：按下時觸發「去抓資料」這個功能 -->
-      <button @click="去抓資料">搜尋</button>
+        <!-- 搜尋按鈕：按下時觸發「去抓資料」這個功能 -->
+        <button @click="去抓資料">搜尋</button>
+      </div>
+
+      <!-- 右邊：深色模式切換按鈕 -->
+      <button @click="切換深色模式" class="theme-btn">
+        {{ 深色模式盒 ? '☀️' : '🌙' }}
+      </button>
     </div>
 
     <!-- 錯誤訊息區：如果錯誤訊息盒裡有東西，就顯示紅色提示 -->
@@ -104,10 +145,25 @@ const 去抓資料 = async () => {
 <style scoped>
 /* 這裡放「裝飾」，只影響這個積木 */
 
-/* 搜尋區：讓裡面的東西置中 */
+/* 預設：淺色模式的顏色 */
+div {
+  background: #ffffff;  /* 白色背景 */
+  color: #333333;       /* 深色文字 */
+  transition: background 0.5s, color 0.5s;  /* 切換時慢慢變色 */
+}
+
+/* 搜尋區：搜尋框在中間、模式切換靠右 */
 .search-box {
-  text-align: center;
+  display: flex;                  /* 東西横排 */
+  justify-content: flex-end;     /* 深色模式按鈕靠右 */
+  align-items: center;            /* 垂直置中 */
   margin-top: 30px;
+}
+
+/* 左邊：搜尋框和按鈕包在一起，並置中 */
+.search-left {
+  display: flex;                  /* 搜尋框和按鈕横排 */
+  margin: auto;                   /* 靠左邊再 auto，讓它在中間 */
 }
 
 /* 讓輸入框好看一點 */
@@ -117,6 +173,10 @@ input {
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-right: 10px;
+  background: #ffffff;  /* 淺色輸入框背景 */
+  color: #333333;       /* 淺色文字 */
+  appearance: none;        /* 移除瀏覽器預設樣式 */
+  -webkit-appearance: none; /* Safari 相容 */
 }
 
 /* 讓按鈕好看一點 */
@@ -128,6 +188,12 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+/* 深色模式切換按鈕：圓形、小一點 */
+.theme-btn {
+  padding: 8px 12px;
+  font-size: 18px;
 }
 
 /* 個人資料區：大頭貼和介紹放在同一排 */
@@ -181,6 +247,7 @@ img {
   padding: 20px;                    /* 卡片內距加深 */
   border: 1px solid #999;           /* 邊框加深 */
   border-radius: 8px;               /* 圓角大一點 */
+  background: #ffffff;              /* 淺色卡片背景 */
 }
 
 .repo-card a {
@@ -196,7 +263,59 @@ img {
 .repo-info {
   display: block;
   font-size: 12px;
-  color: #101010;
+  color: #666;
   margin-top: 5px;
+}
+</style>
+
+<style>
+/* ============================================ */
+/* 全域樣式：影響 body 的深色模式（不在 scoped）*/
+/* ============================================ */
+
+/* 預設：淺色模式 body 背景 */
+body {
+  background: #ffffff;
+  transition: background 0.5s;  /* 讓 body 背景也有過渡動畫 */
+}
+
+/* 深色模式時：整個 body 背景變深色 */
+body.dark {
+  background: #202124;   /* Google 深色背景 */
+  transition: background 0.5s;  /* 讓過渡動畫同步 */
+}
+
+/* 深色模式時：App.vue 裡面的 div 也跟著變 */
+body.dark div {
+  background: #202124;  /* 直接設定深色背景，讓過渡動畫平滑 */
+  color: #e8eaed;         /* 淺色文字 */
+  transition: background 0.5s, color 0.5s;  /* 同步過渡動畫 */
+}
+
+body.dark input {
+  background: #303134;   /* 深色輸入框背景 */
+  color: #e8eaed;        /* 淺色文字 */
+  border-color: #5f6368; /* 深色邊框 */
+}
+
+body.dark .repo-card {
+  background: #303134;   /* 深色卡片背景 */
+  border-color: #5f6368; /* 深色邊框 */
+}
+
+body.dark .repo-card a {
+  color: #8ab4f8;        /* 深色模式連結顏色 */
+}
+
+body.dark .repo-section h3 {
+  color: #e8eaed;        /* 深色模式標題顏色 */
+}
+
+body.dark .repo-info {
+  color: #9aa0a6;        /* 深色模式次要文字 */
+}
+
+body.dark .theme-btn {
+  background: #5f6368;   /* 深色模式按鈕背景 */
 }
 </style>
